@@ -11,6 +11,7 @@ import {
 	Hero,
 	ParticlesSDK,
 	Rune,
+	Sleeper,
 	SpiritBear,
 	Tower,
 	Unit
@@ -26,8 +27,9 @@ import { RuneManager } from "./modules/runes"
 import { TowerManager } from "./modules/tower"
 
 const bootstrap = new (class CRadiuses {
-	private readonly menu = new MenuManager()
+	private readonly sleeper = new Sleeper()
 	private readonly pSDK = new ParticlesSDK()
+	private readonly menu = new MenuManager(this.sleeper)
 
 	private readonly bears = new BearManager(this.menu, this.pSDK)
 	private readonly runes = new RuneManager(this.menu, this.pSDK)
@@ -148,10 +150,12 @@ const bootstrap = new (class CRadiuses {
 	}
 
 	public GameEnded() {
+		this.sleeper.FullReset()
 		this.customRadius.GameEnded()
 	}
 
 	public GameStarted() {
+		this.sleeper.FullReset()
 		this.customRadius.GameStarted()
 	}
 
