@@ -23,7 +23,7 @@ export class NodeHero {
 		this.Menu.IsHidden = false
 		this.Menu.SaveUnusedConfigs = true
 
-		this.AttackState = this.Menu.AddToggle("Attack", false)
+		this.AttackState = this.Menu.AddToggle("RADIUSES_ATTACK_TITLE", false)
 		this.Abilities = this.Menu.AddImageSelector("RADIUSES_HIDDEN_TITLE", [])
 
 		this.AttackSettings = new HeroAttackSettings(this.hero, this.Menu)

@@ -23,7 +23,7 @@ export class BearMenu extends BaseMenu {
 		this.Tree.SortNodes = false
 		this.Tree.SaveUnusedConfigs = true
 
-		this.AttackState = this.Tree.AddToggle("Attack", false)
+		this.AttackState = this.Tree.AddToggle("RADIUSES_ATTACK_TITLE", false)
 		this.Attack = new AttackSettings(this.Tree)
 		this.Abilities = this.Tree.AddImageSelector("RADIUSES_HIDDEN_TITLE", [])
 		this.Abilities.IsHidden = true

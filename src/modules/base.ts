@@ -1,16 +1,8 @@
 import {
 	Ability,
-	ability_capture,
-	ability_lamp_use,
-	ability_pluck_famango,
 	DOTAScriptInventorySlot,
 	Entity,
-	generic_hidden,
-	high_five,
 	ParticlesSDK,
-	plus_guild_banner,
-	plus_high_five,
-	twin_gate_portal_warp,
 	Unit
 } from "github.com/octarine-public/wrapper/index"
 
@@ -89,25 +81,13 @@ export abstract class BaseUnitManager extends BaseManager {
 	}
 
 	protected AbilityExclude(ability: Ability) {
-		if (ability.IsPassive || ability.IsAttributes) {
+		if (ability.IsPassive || !ability.ShouldBeDrawable) {
 			return true
 		}
 		if (this.excluded.has(ability.Name) || ability.MaxLevel === 0) {
 			return true
 		}
-		return (
-			ability.IsEmpty ||
-			ability.Name.endsWith("_release") ||
-			ability.Name.startsWith("seasonal_") ||
-			ability instanceof high_five ||
-			ability instanceof plus_high_five ||
-			ability instanceof plus_guild_banner ||
-			ability instanceof generic_hidden ||
-			ability instanceof twin_gate_portal_warp ||
-			ability instanceof ability_lamp_use ||
-			ability instanceof ability_pluck_famango ||
-			ability instanceof ability_capture
-		)
+		return ability.IsEmpty || ability.Name.endsWith("_release")
 	}
 
 	protected UpdateUnitDataItems(unitData: Nullable<BaseUnitData>, menu: BaseMenu) {
