@@ -74,7 +74,11 @@ export class BearData extends BaseUnitData {
 		this.UpdateAbilityRadius(pSDK, menu, entity)
 	}
 
-	protected UpdateAttackRadius(pSDK: ParticlesSDK, baseMenu: BearMenu) {
+	protected UpdateAttackRadius(
+		pSDK: ParticlesSDK,
+		baseMenu: BearMenu,
+		newAttackRange?: number
+	) {
 		const owner = this.Owner
 		const menu = baseMenu.Attack
 		const stateAttack = baseMenu.IsEnabledAttack(owner)
@@ -83,8 +87,7 @@ export class BearData extends BaseUnitData {
 			this.DestroyAttackRadius(pSDK)
 			return
 		}
-		const attackRange = owner.GetAttackRange()
-
+		const attackRange = newAttackRange ?? owner.GetAttackRange()
 		pSDK.DrawCircle(this.KeyAttackName(), owner, attackRange, {
 			Fill: menu.Fill.value,
 			Color: menu.Color.SelectedColor,

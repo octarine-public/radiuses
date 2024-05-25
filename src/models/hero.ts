@@ -82,7 +82,11 @@ export class HeroData extends BaseUnitData {
 		this.UpdateAbilitiesRadius(pSDK, menu)
 	}
 
-	protected UpdateAttackRadius(pSDK: ParticlesSDK, baseMenu: HeroMenu) {
+	protected UpdateAttackRadius(
+		pSDK: ParticlesSDK,
+		baseMenu: HeroMenu,
+		newAttackRange?: number
+	) {
 		const owner = this.Owner
 		const menu = baseMenu.AttackSettings(owner)
 		if (menu === undefined) {
@@ -93,7 +97,7 @@ export class HeroData extends BaseUnitData {
 			this.DestroyAttackRadius(pSDK)
 			return
 		}
-		const attackRange = owner.GetAttackRange()
+		const attackRange = newAttackRange ?? owner.GetAttackRange()
 		pSDK.DrawCircle(this.KeyAttackName(), owner, attackRange, {
 			Fill: menu.Fill.value,
 			Color: menu.Color.SelectedColor,
@@ -169,7 +173,7 @@ export class HeroData extends BaseUnitData {
 			if (newAttackRange === oldRange) {
 				return
 			}
-			this.UpdateAttackRadius(pSDK, menu)
+			this.UpdateAttackRadius(pSDK, menu, newAttackRange)
 			this.attackRangeCaches.set(unit, newAttackRange)
 		})
 	}
