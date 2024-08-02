@@ -1,9 +1,4 @@
-import {
-	Menu,
-	NotificationsSDK,
-	ResetSettingsUpdated,
-	Sleeper
-} from "github.com/octarine-public/wrapper/index"
+import { Menu } from "github.com/octarine-public/wrapper/index"
 
 import { EMenuType } from "../enum"
 import { RadiusesEvents } from "../events"
@@ -24,12 +19,11 @@ export class MenuManager {
 	public readonly CustomRadiusMenu: CustomRadiusMenu
 
 	private readonly tree: Menu.Node
-	private readonly reset: Menu.Button
 	private readonly baseNode = Menu.AddEntry("Visual")
 	public readonly basePath = "github.com/octarine-public/radiuses/scripts_files/"
 	private readonly nodeIcon = this.basePath + "menu/icons/bullseye.svg"
 
-	constructor(private readonly sleeper: Sleeper) {
+	constructor() {
 		this.tree = this.baseNode.AddNode("Radiuses", this.nodeIcon)
 		this.tree.SortNodes = false
 
@@ -42,22 +36,6 @@ export class MenuManager {
 		this.CustomRadiusMenu = new CustomRadiusMenu(this.tree)
 
 		this.State.OnValue(() => this.EmitMenuChanged())
-		this.reset = this.tree.AddButton("Reset settings", "Reset settings to default")
-		this.reset.OnValue(() => this.ResetSettings())
-	}
-
-	public ResetSettings() {
-		if (this.sleeper.Sleeping("ResetSettings")) {
-			return
-		}
-		this.State.value = this.State.defaultValue
-		this.RuneMenu.ResetSettings()
-		this.HeroMenu.ResetSettings()
-		this.BearMenu.ResetSettings()
-		this.TowerMenu.ResetSettings()
-		this.CustomRadiusMenu.ResetSettings()
-		NotificationsSDK.Push(new ResetSettingsUpdated())
-		this.sleeper.Sleep(2 * 1000, "ResetSettings")
 	}
 
 	private EmitMenuChanged() {

@@ -21,13 +21,6 @@ export class HeroMenu extends BaseMenu {
 		return this.baseState.value && this.State.value
 	}
 
-	public ResetSettings(): void {
-		this.State.value = this.State.defaultValue
-		this.hodeHeroes.forEach(hero => hero.ResetSettings())
-		this.Tree.Update()
-		this.EmitMenuChanged()
-	}
-
 	public IsEnabledAbility(ability: Ability) {
 		const owner = ability.Owner
 		if (owner === undefined) {

@@ -22,7 +22,7 @@ export class AbilitySettings {
 		this.Tree.IsHidden = true
 
 		this.Color = this.Tree.AddColorPicker("Color", Color.Green.SetA(255 / 2))
-		this.Fill = this.Tree.AddToggle("Fill", true, "Fill radius insides color")
+		this.Fill = this.Tree.AddToggle("Fill", false, "Fill radius insides color")
 		this.Style = this.Tree.AddDropdown("Style", ["Default", "Rope"])
 		this.Team = this.Tree.AddDropdown("Team", this.arrNames, ETeam.Controlable)
 

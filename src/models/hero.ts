@@ -24,6 +24,7 @@ export class HeroData extends BaseUnitData {
 
 	public Draw(pSDK: ParticlesSDK, menu: HeroMenu) {
 		this.UpdateRazePosition(pSDK)
+		this.UpdateCacheRadius(pSDK, menu)
 		this.UpdateAttackRangeCache(pSDK, menu)
 	}
 
@@ -56,20 +57,17 @@ export class HeroData extends BaseUnitData {
 
 	public UnitDestroyed(pSDK: ParticlesSDK, menu: HeroMenu) {
 		this.DestroyAttackRadius(pSDK)
-		this.attackRangeCaches.delete(this.Owner)
 		menu.DestroyHero(this.Owner)
 	}
 
 	public AbilityDestroyed(pSDK: ParticlesSDK, entity: Item | Ability) {
 		this.DestroyAbilityRadius(pSDK, entity)
-
+		if (entity instanceof Item) {
+			this.items.remove(entity)
+		}
 		if (entity instanceof Ability) {
 			this.razes.delete(entity)
 			this.spells.remove(entity)
-		}
-
-		if (entity instanceof Item) {
-			this.items.remove(entity)
 		}
 	}
 
@@ -104,6 +102,7 @@ export class HeroData extends BaseUnitData {
 			RenderStyle: menu.Style.SelectedID,
 			Attachment: ParticleAttachment.PATTACH_ABSORIGIN_FOLLOW
 		})
+		this.AttackRangeOld = attackRange
 	}
 
 	protected UpdateAbilityRadius(
@@ -146,6 +145,7 @@ export class HeroData extends BaseUnitData {
 			Color: abilSettings?.Color.SelectedColor ?? Color.Aqua,
 			Attachment: ParticleAttachment.PATTACH_ABSORIGIN_FOLLOW
 		})
+		this.abilitiesRadiusCaches.set(ability, this.Radius(ability))
 	}
 
 	protected CreateShadowRaze(
@@ -155,8 +155,8 @@ export class HeroData extends BaseUnitData {
 		ability: Ability
 	) {
 		this.razes.add(ability)
-		const radiusByLevel = ability.GetBaseAOERadiusForLevel(1)
 		const currRadius = ability.AOERadius
+		const radiusByLevel = ability.GetBaseAOERadiusForLevel(1)
 		const radius = currRadius < radiusByLevel ? radiusByLevel : currRadius
 		pSDK.DrawCircle(this.KeyAbilityName(ability), owner, radius, {
 			Fill: abilSettings?.Fill.value ?? true,
@@ -168,25 +168,22 @@ export class HeroData extends BaseUnitData {
 	}
 
 	protected UpdateAttackRangeCache(pSDK: ParticlesSDK, menu: HeroMenu) {
-		this.attackRangeCaches.forEach((oldRange, unit) => {
-			const newAttackRange = unit.GetAttackRange()
-			if (newAttackRange === oldRange) {
-				return
-			}
+		const newAttackRange = this.Owner.GetAttackRange()
+		if (newAttackRange !== this.AttackRangeOld) {
 			this.UpdateAttackRadius(pSDK, menu, newAttackRange)
-			this.attackRangeCaches.set(unit, newAttackRange)
-		})
+		}
 	}
 
 	protected UpdateRazePosition(pSDK: ParticlesSDK) {
 		this.razes.forEach(abil => {
-			if (abil.Owner !== undefined) {
-				const position = abil.Owner.InFront(abil.GetCastRangeForLevel(1))
-				pSDK.SetConstrolPointsByKey(this.KeyAbilityName(abil), [0, position])
+			if (abil.Owner === undefined) {
+				pSDK.DestroyByKey(this.KeyAbilityName(abil))
+				this.razes.delete(abil)
 				return
 			}
-			pSDK.DestroyByKey(this.KeyAbilityName(abil))
-			this.razes.delete(abil)
+			const radiusByLevel = abil.GetBaseAOERadiusForLevel(1)
+			const position = abil.Owner.InFront(radiusByLevel)
+			pSDK.SetConstrolPointsByKey(this.KeyAbilityName(abil), [0, position])
 		})
 	}
 }

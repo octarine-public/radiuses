@@ -17,6 +17,7 @@ export class BearData extends BaseUnitData {
 	}
 
 	public Draw(pSDK: ParticlesSDK, menu: BearMenu) {
+		this.UpdateCacheRadius(pSDK, menu)
 		this.UpdateAttackRangeCache(pSDK, menu)
 	}
 
@@ -37,7 +38,6 @@ export class BearData extends BaseUnitData {
 
 	public UnitDestroyed(pSDK: ParticlesSDK, menu: BearMenu) {
 		this.DestroyAttackRadius(pSDK)
-		this.attackRangeCaches.delete(this.Owner)
 		menu.DestroyBear()
 	}
 
@@ -94,6 +94,7 @@ export class BearData extends BaseUnitData {
 			RenderStyle: menu.Style.SelectedID,
 			Attachment: ParticleAttachment.PATTACH_ABSORIGIN_FOLLOW
 		})
+		this.AttackRangeOld = attackRange
 	}
 
 	protected UpdateAbilityRadius(
@@ -118,16 +119,13 @@ export class BearData extends BaseUnitData {
 			Attachment: ParticleAttachment.PATTACH_ABSORIGIN_FOLLOW,
 			RenderStyle: abilSettings?.Style.SelectedID ?? PARTICLE_RENDER.NORMAL
 		})
+		this.abilitiesRadiusCaches.set(ability, this.Radius(ability))
 	}
 
 	protected UpdateAttackRangeCache(pSDK: ParticlesSDK, menu: BearMenu) {
-		this.attackRangeCaches.forEach((oldRange, unit) => {
-			const newAttackRange = unit.GetAttackRange()
-			if (newAttackRange === oldRange) {
-				return
-			}
-			this.UpdateAttackRadius(pSDK, menu)
-			this.attackRangeCaches.set(unit, newAttackRange)
-		})
+		const newAttackRange = this.Owner.GetAttackRange()
+		if (newAttackRange !== this.AttackRangeOld) {
+			this.UpdateAttackRadius(pSDK, menu, newAttackRange)
+		}
 	}
 }

@@ -41,18 +41,6 @@ export class TowerMenu extends BaseMenu {
 		this.Team.OnValue(call => this.UpdateTeamMenu(call.SelectedID, true))
 	}
 
-	public ResetSettings() {
-		super.ResetSettings()
-		this.Fill.value = this.Fill.defaultValue
-		this.Style.SelectedID = this.Style.defaultValue
-		this.Team.SelectedID = this.Team.defaultValue
-		this.Target.value = this.Target.defaultValue
-		this.UpdateTeamMenu(this.Team.SelectedID)
-		this.AllyColor.SelectedColor.CopyFrom(this.AllyColor.defaultColor)
-		this.EnemyColor.SelectedColor.CopyFrom(this.EnemyColor.defaultColor)
-		this.EmitMenuChanged()
-	}
-
 	protected UpdateTeamMenu(team: ETeam, isEmit = false) {
 		switch (team) {
 			case ETeam.Allies:

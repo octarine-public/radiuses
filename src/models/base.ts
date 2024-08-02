@@ -10,11 +10,10 @@ import { BaseMenu } from "../menu/base"
 export abstract class BaseUnitData {
 	protected items: Item[] = []
 	protected spells: Ability[] = []
-	protected readonly attackRangeCaches = new Map<Unit, number>()
+	protected AttackRangeOld = 0
+	protected readonly abilitiesRadiusCaches = new Map<Ability, number>()
 
-	constructor(public readonly Owner: Unit) {
-		this.attackRangeCaches.set(Owner, 0)
-	}
+	constructor(public readonly Owner: Unit) {}
 
 	public abstract Draw(pSDK: ParticlesSDK, menu: BaseMenu): void
 	public abstract MenuChanged(pSDK: ParticlesSDK, menu: BaseMenu): void
@@ -52,8 +51,8 @@ export abstract class BaseUnitData {
 				? ability.GetBaseAOERadiusForLevel(1)
 				: ability.GetCastRangeForLevel(1)
 			: ability.CastRange === 0
-			  ? ability.AOERadius
-			  : ability.CastRange
+				? ability.AOERadius
+				: ability.CastRange
 	}
 
 	protected KeyAbilityName(ability: Ability) {
@@ -71,6 +70,7 @@ export abstract class BaseUnitData {
 
 	// Destroy ability radius
 	protected DestroyAbilityRadius(pSDK: ParticlesSDK, ability: Ability) {
+		this.abilitiesRadiusCaches.delete(ability)
 		pSDK.DestroyByKey(this.KeyAbilityName(ability))
 	}
 
@@ -86,6 +86,16 @@ export abstract class BaseUnitData {
 		for (let index = arr.length - 1; index > -1; index--) {
 			const item = arr[index]
 			this.DestroyAbilityRadius(pSDK, item)
+		}
+	}
+
+	protected UpdateCacheRadius(pSDK: ParticlesSDK, menu: BaseMenu) {
+		const findSpell = this.spells.concat(this.items).find(spell => {
+			const cachedRadius = this.abilitiesRadiusCaches.get(spell)
+			return cachedRadius !== undefined && cachedRadius !== this.Radius(spell)
+		})
+		if (findSpell !== undefined) {
+			this.UpdateAbilityRadius(pSDK, menu, findSpell)
 		}
 	}
 }

@@ -11,7 +11,6 @@ import {
 	Hero,
 	ParticlesSDK,
 	Rune,
-	Sleeper,
 	SpiritBear,
 	Tower,
 	Unit
@@ -26,10 +25,9 @@ import { HeroManager } from "./modules/heroes"
 import { RuneManager } from "./modules/runes"
 import { TowerManager } from "./modules/tower"
 
-const bootstrap = new (class CRadiuses {
-	private readonly sleeper = new Sleeper()
+new (class CRadiuses {
 	private readonly pSDK = new ParticlesSDK()
-	private readonly menu = new MenuManager(this.sleeper)
+	private readonly menu = new MenuManager()
 
 	private readonly bears = new BearManager(this.menu, this.pSDK)
 	private readonly runes = new RuneManager(this.menu, this.pSDK)
@@ -37,32 +35,48 @@ const bootstrap = new (class CRadiuses {
 	private readonly towers = new TowerManager(this.menu, this.pSDK)
 	private readonly customRadius = new CustomRadiusManager(this.menu, this.pSDK)
 
-	protected get State() {
+	private get state() {
 		return this.menu.State.value
 	}
 
-	protected get IsPostGame() {
+	private get isPostGame() {
 		return (
 			GameRules === undefined ||
 			GameRules.GameState === DOTAGameState.DOTA_GAMERULES_STATE_POST_GAME
 		)
 	}
 
-	protected get IsUIGame() {
+	private get isUIGame() {
 		return GameState.UIState === DOTAGameUIState.DOTA_GAME_UI_DOTA_INGAME
 	}
 
-	public Draw() {
-		if (!this.State || this.IsPostGame) {
+	constructor() {
+		EventsSDK.on("Draw", this.Draw.bind(this))
+		EventsSDK.on("GameEnded", this.GameEnded.bind(this))
+		EventsSDK.on("GameStarted", this.GameStarted.bind(this))
+		EventsSDK.on("EntityCreated", this.EntityCreated.bind(this))
+		EventsSDK.on("EntityDestroyed", this.EntityDestroyed.bind(this))
+		EventsSDK.on("LifeStateChanged", this.LifeStateChanged.bind(this))
+		EventsSDK.on("GameStateChanged", this.GameStateChanged.bind(this))
+		EventsSDK.on("UnitItemsChanged", this.UnitItemsChanged.bind(this))
+		EventsSDK.on("UnitPropertyChanged", this.UnitPropertyChanged.bind(this))
+		EventsSDK.on("AbilityLevelChanged", this.AbilityLevelChanged.bind(this))
+		EventsSDK.on("UnitAbilitiesChanged", this.UnitAbilitiesChanged.bind(this))
+		RadiusesEvents.on("MenuChanged", this.MenuChanged.bind(this))
+	}
+
+	protected Draw() {
+		if (!this.state || this.isPostGame) {
 			return
 		}
-		if (this.IsUIGame) {
+		if (this.isUIGame) {
+			this.bears.Draw()
 			this.heroes.Draw()
 			this.towers.Draw()
 		}
 	}
 
-	public EntityCreated(entity: Entity) {
+	protected EntityCreated(entity: Entity) {
 		if (entity instanceof SpiritBear) {
 			this.bears.EntityCreated(entity)
 		}
@@ -78,7 +92,7 @@ const bootstrap = new (class CRadiuses {
 		}
 	}
 
-	public EntityDestroyed(entity: Entity) {
+	protected EntityDestroyed(entity: Entity) {
 		if (entity instanceof Tower) {
 			this.towers.EntityDestroyed(entity)
 		}
@@ -98,7 +112,7 @@ const bootstrap = new (class CRadiuses {
 		}
 	}
 
-	public LifeStateChanged(entity: Entity) {
+	protected LifeStateChanged(entity: Entity) {
 		if (entity instanceof Hero) {
 			this.heroes.LifeStateChanged(entity)
 			this.customRadius.LifeStateChanged(entity)
@@ -111,7 +125,7 @@ const bootstrap = new (class CRadiuses {
 		}
 	}
 
-	public UnitAbilitiesChanged(entity: Unit) {
+	protected UnitAbilitiesChanged(entity: Unit) {
 		if (entity instanceof Hero) {
 			this.heroes.UnitAbilitiesChanged(entity)
 		}
@@ -120,7 +134,7 @@ const bootstrap = new (class CRadiuses {
 		}
 	}
 
-	public UnitItemsChanged(entity: Unit) {
+	protected UnitItemsChanged(entity: Unit) {
 		if (entity instanceof Hero) {
 			this.heroes.UnitItemsChanged(entity)
 		}
@@ -129,13 +143,13 @@ const bootstrap = new (class CRadiuses {
 		}
 	}
 
-	public GameStateChanged(newState: DOTAGameState) {
+	protected GameStateChanged(newState: DOTAGameState) {
 		this.runes.GameStateChanged(newState)
 		this.towers.GameStateChanged(newState)
 		this.customRadius.GameStateChanged(newState)
 	}
 
-	public UnitPropertyChanged(entity: Unit) {
+	protected UnitPropertyChanged(entity: Unit) {
 		if (entity instanceof Hero) {
 			this.heroes.UnitPropertyChanged(entity)
 		}
@@ -144,22 +158,20 @@ const bootstrap = new (class CRadiuses {
 		}
 	}
 
-	public AbilityLevelChanged(entity: Ability) {
+	protected AbilityLevelChanged(entity: Ability) {
 		this.bears.AbilityLevelChanged(entity)
 		this.heroes.AbilityLevelChanged(entity)
 	}
 
-	public GameEnded() {
-		this.sleeper.FullReset()
+	protected GameEnded() {
 		this.customRadius.GameEnded()
 	}
 
-	public GameStarted() {
-		this.sleeper.FullReset()
+	protected GameStarted() {
 		this.customRadius.GameStarted()
 	}
 
-	public MenuChanged(eventType: EMenuType, unit?: Unit) {
+	protected MenuChanged(eventType: EMenuType, unit?: Unit) {
 		switch (eventType) {
 			case EMenuType.Towers:
 				this.towers.MenuChanged()
@@ -177,13 +189,13 @@ const bootstrap = new (class CRadiuses {
 				this.customRadius.MenuChanged()
 				break
 			default: {
-				this.UpdateByBaseMenu(unit)
+				this.updateByBaseMenu(unit)
 				break
 			}
 		}
 	}
 
-	private UpdateByBaseMenu(unit?: Unit) {
+	private updateByBaseMenu(unit?: Unit) {
 		this.bears.MenuChanged()
 		this.towers.MenuChanged()
 		this.runes.MenuChanged()
@@ -191,29 +203,3 @@ const bootstrap = new (class CRadiuses {
 		this.customRadius.MenuChanged()
 	}
 })()
-
-EventsSDK.on("Draw", () => bootstrap.Draw())
-
-EventsSDK.on("GameEnded", () => bootstrap.GameEnded())
-
-EventsSDK.on("GameStarted", () => bootstrap.GameStarted())
-
-EventsSDK.on("EntityCreated", entity => bootstrap.EntityCreated(entity))
-
-EventsSDK.on("EntityDestroyed", entity => bootstrap.EntityDestroyed(entity))
-
-EventsSDK.on("LifeStateChanged", entity => bootstrap.LifeStateChanged(entity))
-
-EventsSDK.on("GameStateChanged", state => bootstrap.GameStateChanged(state))
-
-EventsSDK.on("UnitItemsChanged", entity => bootstrap.UnitItemsChanged(entity))
-
-EventsSDK.on("UnitPropertyChanged", unit => bootstrap.UnitPropertyChanged(unit))
-
-EventsSDK.on("AbilityLevelChanged", ability => bootstrap.AbilityLevelChanged(ability))
-
-EventsSDK.on("UnitAbilitiesChanged", entity => bootstrap.UnitAbilitiesChanged(entity))
-
-RadiusesEvents.on("MenuChanged", (eventType, unit) =>
-	bootstrap.MenuChanged(eventType, unit)
-)

@@ -25,7 +25,7 @@ export class HeroAttackSettings {
 		this.Tree.IsHidden = true
 
 		this.Color = this.Tree.AddColorPicker("Color", Color.Green.SetA(255 / 2))
-		this.Fill = this.Tree.AddToggle("Fill", true, "Fill radius insides color")
+		this.Fill = this.Tree.AddToggle("Fill", false, "Fill radius insides color")
 		this.Style = this.Tree.AddDropdown("Style", ["Default", "Rope"])
 		this.Team = this.Tree.AddDropdown("Team", this.arrNames, 3)
 
@@ -48,13 +48,6 @@ export class HeroAttackSettings {
 			(this.Team.SelectedID === ETeam.Enemies && this.hero.IsEnemy()) ||
 			(this.Team.SelectedID === ETeam.Controlable && this.hero.IsControllable)
 		)
-	}
-
-	public ResetSettings() {
-		this.Team.SelectedID = this.Team.SelectedID
-		this.Fill.value = this.Fill.defaultValue
-		this.Style.SelectedID = this.Style.defaultValue
-		this.Color.SelectedColor.CopyFrom(this.Color.defaultColor)
 	}
 
 	protected EmitMenuChanged() {
@@ -109,13 +102,6 @@ export class HeroAbilitySettings {
 
 	public Destroy() {
 		this.Tree.DetachFromParent()
-	}
-
-	public ResetSettings() {
-		this.Team.SelectedID = this.Team.SelectedID
-		this.Fill.value = this.Fill.defaultValue
-		this.Style.SelectedID = this.Style.defaultValue
-		this.Color.SelectedColor.CopyFrom(this.Color.defaultColor)
 	}
 
 	protected EmitMenuChanged() {

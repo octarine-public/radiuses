@@ -18,10 +18,4 @@ export class RuneMenu extends BaseMenu {
 		this.Color = this.Tree.AddColorPicker("Color", Color.Aqua)
 		this.Color.OnValue(() => this.EmitMenuChanged())
 	}
-
-	public ResetSettings() {
-		super.ResetSettings()
-		this.Color.SelectedColor.CopyFrom(this.Color.defaultColor)
-		this.EmitMenuChanged()
-	}
 }

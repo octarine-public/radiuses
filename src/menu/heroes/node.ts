@@ -56,12 +56,6 @@ export class NodeHero {
 		return this.AttackSettings.StateByTeam
 	}
 
-	public ResetSettings() {
-		this.AttackState.value = this.AttackState.defaultValue
-		this.AttackSettings.ResetSettings()
-		this.AbilitySettings.forEach(abil => abil.ResetSettings())
-	}
-
 	public AbilityStateByTeam(abilName: string) {
 		return this.AbilitySettings.get(abilName)?.StateByTeam ?? false
 	}

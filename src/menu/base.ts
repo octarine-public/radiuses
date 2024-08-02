@@ -21,12 +21,6 @@ export abstract class BaseMenu {
 		this.State.OnValue(() => this.EmitMenuChanged())
 	}
 
-	public ResetSettings() {
-		this.State.value = this.State.defaultValue
-		this.Tree.Update()
-		this.EmitMenuChanged()
-	}
-
 	protected EmitMenuChanged() {
 		RadiusesEvents.emit("MenuChanged", false, this.mType)
 	}
