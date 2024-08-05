@@ -181,8 +181,8 @@ export class HeroData extends BaseUnitData {
 				this.razes.delete(abil)
 				return
 			}
-			const radiusByLevel = abil.GetBaseAOERadiusForLevel(1)
-			const position = abil.Owner.InFront(radiusByLevel)
+			const castRangeByLevel = abil.GetBaseCastRangeForLevel(1)
+			const position = abil.Owner.InFront(castRangeByLevel)
 			pSDK.SetConstrolPointsByKey(this.KeyAbilityName(abil), [0, position])
 		})
 	}
