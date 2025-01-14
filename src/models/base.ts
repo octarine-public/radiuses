@@ -15,8 +15,8 @@ export abstract class BaseUnitData {
 
 	constructor(public readonly Owner: Unit) {}
 
-	public abstract Draw(pSDK: ParticlesSDK, menu: BaseMenu): void
 	public abstract MenuChanged(pSDK: ParticlesSDK, menu: BaseMenu): void
+	public abstract PostDataUpdate(pSDK: ParticlesSDK, menu: BaseMenu): void
 
 	public abstract UnitDestroyed(pSDK: ParticlesSDK, menu: BaseMenu): void
 	public abstract AbilityDestroyed(pSDK: ParticlesSDK, entity: Item | Ability): void

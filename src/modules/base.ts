@@ -45,6 +45,7 @@ export abstract class BaseUnitManager extends BaseManager {
 		"alchemist_unstable_concoction_throw"
 	])
 
+	public abstract PostDataUpdate(): void
 	public abstract EntityCreated(entity: Unit): void
 	public abstract EntityDestroyed(entity: Unit | Ability): void
 
@@ -56,7 +57,7 @@ export abstract class BaseUnitManager extends BaseManager {
 	protected abstract UnitShouldBeValid(entity: Nullable<Entity>): entity is Unit
 
 	protected GetItems(unit: Nullable<Unit>) {
-		if (unit === undefined || !unit.CanUseItems) {
+		if (unit === undefined || unit.IsIllusion) {
 			return []
 		}
 		const inventory = unit.Inventory

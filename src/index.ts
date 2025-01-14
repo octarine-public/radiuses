@@ -62,6 +62,7 @@ new (class CRadiuses {
 		EventsSDK.on("UnitPropertyChanged", this.UnitPropertyChanged.bind(this))
 		EventsSDK.on("AbilityLevelChanged", this.AbilityLevelChanged.bind(this))
 		EventsSDK.on("UnitAbilitiesChanged", this.UnitAbilitiesChanged.bind(this))
+		EventsSDK.on("PostDataUpdate", this.PostDataUpdate.bind(this))
 		RadiusesEvents.on("MenuChanged", this.MenuChanged.bind(this))
 	}
 
@@ -70,10 +71,17 @@ new (class CRadiuses {
 			return
 		}
 		if (this.isUIGame) {
-			this.bears.Draw()
 			this.heroes.Draw()
 			this.towers.Draw()
 		}
+	}
+
+	protected PostDataUpdate() {
+		if (!this.state || this.isPostGame) {
+			return
+		}
+		this.bears.PostDataUpdate()
+		this.heroes.PostDataUpdate()
 	}
 
 	protected EntityCreated(entity: Entity) {

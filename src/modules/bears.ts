@@ -15,9 +15,9 @@ export class BearManager extends BaseUnitManager {
 		return super.State && this.menu.BearMenu.State.value
 	}
 
-	public Draw() {
+	public PostDataUpdate(): void {
 		if (this.State) {
-			this.bears.forEach(data => data.Draw(this.pSDK, this.menu.BearMenu))
+			this.bears.forEach(data => data.PostDataUpdate(this.pSDK, this.menu.BearMenu))
 		}
 	}
 

@@ -16,7 +16,7 @@ export class BearData extends BaseUnitData {
 		super(Owner)
 	}
 
-	public Draw(pSDK: ParticlesSDK, menu: BearMenu) {
+	public PostDataUpdate(pSDK: ParticlesSDK, menu: BearMenu) {
 		this.UpdateCacheRadius(pSDK, menu)
 		this.UpdateAttackRangeCache(pSDK, menu)
 	}

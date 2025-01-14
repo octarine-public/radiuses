@@ -22,8 +22,11 @@ export class HeroData extends BaseUnitData {
 		super(Owner)
 	}
 
-	public Draw(pSDK: ParticlesSDK, menu: HeroMenu) {
+	public Draw(pSDK: ParticlesSDK, _menu: HeroMenu) {
 		this.UpdateRazePosition(pSDK)
+	}
+
+	public PostDataUpdate(pSDK: ParticlesSDK, menu: HeroMenu): void {
 		this.UpdateCacheRadius(pSDK, menu)
 		this.UpdateAttackRangeCache(pSDK, menu)
 	}
@@ -88,11 +91,13 @@ export class HeroData extends BaseUnitData {
 		const owner = this.Owner
 		const menu = baseMenu.AttackSettings(owner)
 		if (menu === undefined) {
+			this.AttackRangeOld = 0
 			return
 		}
 		const stateAttack = baseMenu.IsEnabledAttack(owner)
 		if (!baseMenu.FullState || !owner.IsAlive || !stateAttack) {
 			this.DestroyAttackRadius(pSDK)
+			this.AttackRangeOld = 0
 			return
 		}
 		const attackRange = newAttackRange ?? owner.GetAttackRange()

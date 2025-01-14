@@ -22,6 +22,14 @@ export class HeroManager extends BaseUnitManager {
 		}
 	}
 
+	public PostDataUpdate(): void {
+		if (this.State) {
+			this.heroes.forEach(data =>
+				data.PostDataUpdate(this.pSDK, this.menu.HeroMenu)
+			)
+		}
+	}
+
 	public MenuChanged(unit?: Unit) {
 		if (unit instanceof Hero) {
 			this.heroes.get(unit)?.MenuChanged(this.pSDK, this.menu.HeroMenu)
