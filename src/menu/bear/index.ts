@@ -19,7 +19,7 @@ export class BearMenu extends BaseMenu {
 		node: Menu.Node,
 		private readonly baseState: Menu.Toggle
 	) {
-		super(node, EMenuType.Bear, false, ImageData.Paths.Icons.icon_svg_teddy_bear)
+		super(node, EMenuType.Bear, false, ImageData.Icons.icon_svg_teddy_bear)
 		this.Tree.SortNodes = false
 		this.Tree.SaveUnusedConfigs = true
 

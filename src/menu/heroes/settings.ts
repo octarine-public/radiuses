@@ -21,7 +21,7 @@ export class HeroAttackSettings {
 		private readonly hero: Hero,
 		node: Menu.Node
 	) {
-		this.Tree = node.AddNode("Attack settings", ImageData.Paths.Icons.icon_damage)
+		this.Tree = node.AddNode("Attack settings", ImageData.Icons.icon_damage)
 		this.Tree.IsHidden = true
 
 		this.Color = this.Tree.AddColorPicker("Color", Color.Green.SetA(255 / 2))

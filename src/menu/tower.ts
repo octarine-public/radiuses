@@ -17,7 +17,7 @@ export class TowerMenu extends BaseMenu {
 	private readonly iconTarget = this.basePath + "menu/icons/target.svg"
 
 	constructor(node: Menu.Node) {
-		super(node, EMenuType.Towers, true, ImageData.Paths.Icons.icon_svg_tower)
+		super(node, EMenuType.Towers, true, ImageData.Icons.icon_svg_tower)
 		this.Fill = this.Tree.AddToggle("Fill", false, "Fill radius insides color")
 
 		this.Target = this.Tree.AddToggle(
