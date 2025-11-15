@@ -76,12 +76,13 @@ new (class CRadiuses {
 		}
 	}
 
-	protected PostDataUpdate() {
-		if (!this.state || this.isPostGame) {
+	protected PostDataUpdate(delta: number) {
+		if (delta === 0 || !this.state || this.isPostGame) {
 			return
 		}
 		this.bears.PostDataUpdate()
 		this.heroes.PostDataUpdate()
+		this.towers.PostDataUpdate()
 	}
 
 	protected EntityCreated(entity: Entity) {

@@ -1,6 +1,7 @@
 import {
 	Color,
 	DOTAGameState,
+	GameRules,
 	GameState,
 	ParticleAttachment,
 	ParticlesSDK,
@@ -14,6 +15,7 @@ import { MenuManager } from "../menu/index"
 
 export class TowerManager {
 	private readonly towers: Tower[] = []
+	private lastIsNightGameTime = false
 
 	constructor(
 		private readonly menu: MenuManager,
@@ -33,7 +35,15 @@ export class TowerManager {
 			this.UpdateTowersTargets()
 		}
 	}
-
+	public PostDataUpdate() {
+		if (GameRules === undefined) {
+			return
+		}
+		if (this.lastIsNightGameTime !== GameRules.IsNightGameTime) {
+			this.lastIsNightGameTime = GameRules.IsNightGameTime
+			this.UpdateRadiusByArr()
+		}
+	}
 	public MenuChanged() {
 		this.UpdateRadiusByArr()
 		const menu = this.TowerMenu
@@ -75,24 +85,28 @@ export class TowerManager {
 			this.pSDK.DestroyByKey(this.TowerKeyName(tower))
 			return
 		}
+		const baseHull = 25
+		const keyName = this.TowerKeyName(tower)
 		const color = tower.IsEnemy()
 			? menu.EnemyColor.SelectedColor
 			: menu.AllyColor.SelectedColor
-		const keyName = this.TowerKeyName(tower)
-		this.pSDK.DrawCircle(keyName, tower, tower.GetAttackRange(undefined, 25), {
+		let range = tower.GetAttackRange(undefined, baseHull)
+		if (this.lastIsNightGameTime) {
+			range -= range - tower.NightVisionRange + baseHull
+		}
+		console.log(range, this.lastIsNightGameTime)
+		this.pSDK.DrawCircle(keyName, tower, range, {
 			Color: color,
 			Fill: menu.Fill.value,
 			RenderStyle: menu.Style.SelectedID,
 			Attachment: ParticleAttachment.PATTACH_POINT_FOLLOW
 		})
 	}
-
 	protected Destroy(entity: Tower) {
 		this.towers.remove(entity)
 		this.pSDK.DestroyByKey(this.TowerKeyName(entity))
 		this.pSDK.DestroyByKey(this.TowerTargetKeyName(entity))
 	}
-
 	protected StateByMenu(tower: Tower, eTeam: ETeam) {
 		return (
 			!(
@@ -102,13 +116,11 @@ export class TowerManager {
 			) && !(!tower.IsEnemy() && eTeam === ETeam.Allies)
 		)
 	}
-
 	protected UpdateRadiusByArr(destroy = false) {
-		for (let index = this.towers.length - 1; index > -1; index--) {
-			this.UpdateRadius(this.towers[index], destroy)
+		for (let i = this.towers.length - 1; i > -1; i--) {
+			this.UpdateRadius(this.towers[i], destroy)
 		}
 	}
-
 	protected UpdateTowersTargets(destroy = false) {
 		for (let index = this.towers.length - 1; index > -1; index--) {
 			const tower = this.towers[index],
@@ -125,15 +137,12 @@ export class TowerManager {
 			this.pSDK.DrawLineToTarget(keyName, tower, target, Color.Red)
 		}
 	}
-
 	protected TowerKeyName(tower: Tower) {
 		return `tower_${tower.Index}`
 	}
-
 	protected TowerTargetKeyName(tower: Tower) {
 		return `tower_target_${tower.Index}`
 	}
-
 	private isShouldBeValidTarget(tower: Tower, target: Unit) {
 		const menu = this.TowerMenu
 		if (!menu.Target.value) {
