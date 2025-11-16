@@ -94,7 +94,6 @@ export class TowerManager {
 		if (this.lastIsNightGameTime) {
 			range -= range - tower.NightVisionRange + baseHull
 		}
-		console.log(range, this.lastIsNightGameTime)
 		this.pSDK.DrawCircle(keyName, tower, range, {
 			Color: color,
 			Fill: menu.Fill.value,
