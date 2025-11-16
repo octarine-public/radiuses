@@ -53,7 +53,6 @@ new (class CRadiuses {
 	constructor() {
 		EventsSDK.on("Draw", this.Draw.bind(this))
 		EventsSDK.on("GameEnded", this.GameEnded.bind(this))
-		EventsSDK.on("GameStarted", this.GameStarted.bind(this))
 		EventsSDK.on("EntityCreated", this.EntityCreated.bind(this))
 		EventsSDK.on("EntityDestroyed", this.EntityDestroyed.bind(this))
 		EventsSDK.on("LifeStateChanged", this.LifeStateChanged.bind(this))
@@ -75,7 +74,6 @@ new (class CRadiuses {
 			this.towers.Draw()
 		}
 	}
-
 	protected PostDataUpdate(delta: number) {
 		if (delta === 0 || !this.state || this.isPostGame) {
 			return
@@ -84,7 +82,6 @@ new (class CRadiuses {
 		this.heroes.PostDataUpdate()
 		this.towers.PostDataUpdate()
 	}
-
 	protected EntityCreated(entity: Entity) {
 		if (entity instanceof SpiritBear) {
 			this.bears.EntityCreated(entity)
@@ -100,7 +97,6 @@ new (class CRadiuses {
 			this.customRadius.EntityCreated(entity)
 		}
 	}
-
 	protected EntityDestroyed(entity: Entity) {
 		if (entity instanceof Tower) {
 			this.towers.EntityDestroyed(entity)
@@ -120,7 +116,6 @@ new (class CRadiuses {
 			this.heroes.EntityDestroyed(entity)
 		}
 	}
-
 	protected LifeStateChanged(entity: Entity) {
 		if (entity instanceof Hero) {
 			this.heroes.LifeStateChanged(entity)
@@ -133,7 +128,6 @@ new (class CRadiuses {
 			this.bears.LifeStateChanged(entity)
 		}
 	}
-
 	protected UnitAbilitiesChanged(entity: Unit) {
 		if (entity instanceof Hero) {
 			this.heroes.UnitAbilitiesChanged(entity)
@@ -142,7 +136,6 @@ new (class CRadiuses {
 			this.bears.UnitAbilitiesChanged(entity)
 		}
 	}
-
 	protected UnitItemsChanged(entity: Unit) {
 		if (entity instanceof Hero) {
 			this.heroes.UnitItemsChanged(entity)
@@ -151,13 +144,11 @@ new (class CRadiuses {
 			this.bears.UnitItemsChanged(entity)
 		}
 	}
-
 	protected GameStateChanged(newState: DOTAGameState) {
 		this.runes.GameStateChanged(newState)
 		this.towers.GameStateChanged(newState)
 		this.customRadius.GameStateChanged(newState)
 	}
-
 	protected UnitPropertyChanged(entity: Unit) {
 		if (entity instanceof Hero) {
 			this.heroes.UnitPropertyChanged(entity)
@@ -166,20 +157,13 @@ new (class CRadiuses {
 			this.bears.UnitPropertyChanged(entity)
 		}
 	}
-
 	protected AbilityLevelChanged(entity: Ability) {
 		this.bears.AbilityLevelChanged(entity)
 		this.heroes.AbilityLevelChanged(entity)
 	}
-
 	protected GameEnded() {
-		this.customRadius.GameEnded()
+		this.pSDK.DestroyAll()
 	}
-
-	protected GameStarted() {
-		this.customRadius.GameStarted()
-	}
-
 	protected MenuChanged(eventType: EMenuType, unit?: Unit) {
 		switch (eventType) {
 			case EMenuType.Towers:

@@ -56,9 +56,6 @@ export class CustomRadiusManager extends BaseManager {
 			this.UpdateRadiusByArr(!entity.IsAlive)
 		}
 	}
-	public GameEnded() {
-		this.pSDK.DestroyAll()
-	}
 	protected UpdateRadius(obj: RadiusesMenu, destroy = false) {
 		const localHero = LocalPlayer?.Hero
 		const keyName = obj.Node.InternalName.split(" ").join("_")
