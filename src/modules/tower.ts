@@ -1,14 +1,3 @@
-import {
-	Color,
-	DOTAGameState,
-	GameRules,
-	GameState,
-	ParticleAttachment,
-	ParticlesSDK,
-	Team,
-	Tower,
-	Unit
-} from "github.com/octarine-public/wrapper/index"
 
 import { ETeam } from "../enum"
 import { MenuManager } from "../menu/index"
@@ -36,11 +25,11 @@ export class TowerManager {
 		}
 	}
 	public PostDataUpdate() {
-		if (GameRules === undefined) {
+		if (Dota2SDK.GameRules === undefined) {
 			return
 		}
-		if (this.lastIsNightGameTime !== GameRules.IsNightGameTime) {
-			this.lastIsNightGameTime = GameRules.IsNightGameTime
+		if (this.lastIsNightGameTime !== Dota2SDK.GameRules.IsNightGameTime) {
+			this.lastIsNightGameTime = Dota2SDK.GameRules.IsNightGameTime
 			this.UpdateRadiusByArr()
 		}
 	}

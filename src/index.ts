@@ -1,21 +1,5 @@
 import "./translate"
 
-import {
-	Ability,
-	DOTAGameState,
-	DOTAGameUIState,
-	Entity,
-	EventsSDK,
-	GameRules,
-	GameState,
-	Hero,
-	ParticlesSDK,
-	Rune,
-	SpiritBear,
-	Tower,
-	Unit
-} from "github.com/octarine-public/wrapper/index"
-
 import { EMenuType } from "./enum"
 import { RadiusesEvents } from "./events"
 import { MenuManager } from "./menu/index"
@@ -41,8 +25,8 @@ new (class CRadiuses {
 
 	private get isPostGame() {
 		return (
-			GameRules === undefined ||
-			GameRules.GameState === DOTAGameState.DOTA_GAMERULES_STATE_POST_GAME
+			Dota2SDK.GameRules === undefined ||
+			Dota2SDK.GameRules.GameState === DOTAGameState.DOTA_GAMERULES_STATE_POST_GAME
 		)
 	}
 

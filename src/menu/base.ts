@@ -1,4 +1,3 @@
-import { Menu } from "github.com/octarine-public/wrapper/index"
 
 import { EMenuType } from "../enum"
 import { RadiusesEvents } from "../events"

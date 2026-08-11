@@ -1,4 +1,3 @@
-import { Color, Hero, ImageData, Menu } from "github.com/octarine-public/wrapper/index"
 
 import { EMenuType, ETeam } from "../../enum"
 import { RadiusesEvents } from "../../events"

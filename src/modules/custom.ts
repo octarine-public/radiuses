@@ -1,10 +1,3 @@
-import {
-	DOTAGameState,
-	Hero,
-	LocalPlayer,
-	ParticleAttachment,
-	ParticlesSDK
-} from "github.com/octarine-public/wrapper/index"
 
 import { RadiusesMenu } from "../menu/custom"
 import { MenuManager } from "../menu/index"
@@ -57,7 +50,7 @@ export class CustomRadiusManager extends BaseManager {
 		}
 	}
 	protected UpdateRadius(obj: RadiusesMenu, destroy = false) {
-		const localHero = LocalPlayer?.Hero
+		const localHero = Dota2SDK.LocalPlayer?.Hero
 		const keyName = obj.Node.InternalName.split(" ").join("_")
 		if (destroy || localHero === undefined || !this.State || !obj.State.value) {
 			this.pSDK.DestroyByKey(keyName)

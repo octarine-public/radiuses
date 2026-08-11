@@ -1,8 +1,3 @@
-import {
-	Color,
-	Menu,
-	PARTICLE_RENDER_NAME
-} from "github.com/octarine-public/wrapper/index"
 
 import { EMenuType } from "../enum"
 import { BaseMenu } from "./base"

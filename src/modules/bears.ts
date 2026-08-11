@@ -1,9 +1,3 @@
-import {
-	Ability,
-	Entity,
-	Item,
-	SpiritBear
-} from "github.com/octarine-public/wrapper/index"
 
 import { BearData } from "../models/bear"
 import { BaseUnitManager } from "./base"

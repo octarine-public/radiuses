@@ -1,12 +1,3 @@
-import {
-	Ability,
-	Color,
-	Item,
-	PARTICLE_RENDER,
-	ParticleAttachment,
-	ParticlesSDK,
-	SpiritBear
-} from "github.com/octarine-public/wrapper/index"
 
 import { BearMenu } from "../menu/bear/index"
 import { BaseUnitData } from "./base"

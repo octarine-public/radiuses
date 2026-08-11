@@ -1,8 +1,3 @@
-import {
-	DOTAGameState,
-	ParticleAttachment,
-	Rune
-} from "github.com/octarine-public/wrapper/index"
 
 import { BaseManager } from "./base"
 

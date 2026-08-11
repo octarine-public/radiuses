@@ -1,9 +1,3 @@
-import {
-	Ability,
-	ImageData,
-	Menu,
-	SpiritBear
-} from "github.com/octarine-public/wrapper/index"
 
 import { EMenuType, ETeam } from "../../enum"
 import { BaseMenu } from "../base"

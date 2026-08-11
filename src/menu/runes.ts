@@ -1,4 +1,3 @@
-import { Color, ImageData, Menu } from "github.com/octarine-public/wrapper/index"
 
 import { EMenuType } from "../enum"
 import { BaseMenu } from "./base"

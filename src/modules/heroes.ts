@@ -1,10 +1,3 @@
-import {
-	Ability,
-	Entity,
-	Hero,
-	Item,
-	Unit
-} from "github.com/octarine-public/wrapper/index"
 
 import { HeroData } from "../models/hero"
 import { BaseUnitManager } from "./base"

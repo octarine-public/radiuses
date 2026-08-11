@@ -1,15 +1,3 @@
-import {
-	Ability,
-	Color,
-	Hero,
-	Item,
-	nevermore_shadowraze1,
-	nevermore_shadowraze2,
-	nevermore_shadowraze3,
-	ParticleAttachment,
-	ParticlesSDK,
-	Unit
-} from "github.com/octarine-public/wrapper/index"
 
 import { HeroMenu } from "../menu/heroes/index"
 import { HeroAbilitySettings } from "../menu/heroes/settings"
