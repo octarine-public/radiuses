@@ -99,9 +99,9 @@ export class TowerManager {
 		return (
 			!(
 				tower.IsEnemy() &&
-				eTeam === ETeam.Enemies &&
+				eTeam === ETeam.Allies &&
 				GameState.LocalTeam !== Team.Observer
-			) && !(!tower.IsEnemy() && eTeam === ETeam.Allies)
+			) && !(!tower.IsEnemy() && eTeam === ETeam.Enemies)
 		)
 	}
 	protected UpdateRadiusByArr(destroy = false) {

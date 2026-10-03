@@ -42,11 +42,11 @@ export class TowerMenu extends BaseMenu {
 
 	protected UpdateTeamMenu(team: ETeam, isEmit = false) {
 		switch (team) {
-			case ETeam.Allies:
+			case ETeam.Enemies:
 				this.AllyColor.IsHidden = true
 				this.EnemyColor.IsHidden = false
 				break
-			case ETeam.Enemies:
+			case ETeam.Allies:
 				this.AllyColor.IsHidden = false
 				this.EnemyColor.IsHidden = true
 				break

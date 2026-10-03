@@ -1,7 +1,7 @@
 export const enum ETeam {
 	All,
-	Allies,
 	Enemies,
+	Allies,
 	Controlable
 }
 

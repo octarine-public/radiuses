@@ -78,11 +78,11 @@ export class BearMenu extends BaseMenu {
 	}
 
 	public DestroyBear() {
-		this.AbilitySettings.forEach(node => node.Destroy())
-
 		if (!this.AbilitySettings.size) {
 			return
 		}
+		this.AbilitySettings.forEach(node => node.Destroy())
+		this.AbilitySettings.clear()
 		this.Abilities.values.clear()
 		this.Abilities.IsHidden = true
 		this.Abilities.Update()
@@ -107,6 +107,7 @@ export class BearMenu extends BaseMenu {
 		newClass.Tree.Update()
 
 		this.Abilities.values.push(name)
+		this.Abilities.IsHidden = false
 		newClass.Tree.IsHidden = !this.Abilities.IsEnabled(name)
 		this.Abilities.Update()
 		this.Tree.Update()
