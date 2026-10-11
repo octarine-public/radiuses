@@ -81,7 +81,7 @@ export class TowerManager {
 			: menu.AllyColor.SelectedColor
 		let range = tower.GetAttackRange(undefined, baseHull)
 		if (this.lastIsNightGameTime && tower.Name.includes("tower1")) {
-			range -= range - tower.NightVisionRange + baseHull
+			range = Math.min(range, tower.NightVisionRange)
 		}
 		this.pSDK.DrawCircle(keyName, tower, range, {
 			Color: color,
