@@ -1,6 +1,6 @@
 
-import { ETeam } from "../enum"
 import { MenuManager } from "../menu/index"
+import { ETowerTeam } from "../menu/team"
 
 export class TowerManager {
 	private readonly towers: Tower[] = []
@@ -70,7 +70,7 @@ export class TowerManager {
 
 	protected UpdateRadius(tower: Tower, destroy = false) {
 		const menu = this.menu.TowerMenu
-		if (!this.State || destroy || !this.StateByMenu(tower, menu.Team.SelectedID)) {
+		if (!this.State || destroy || !this.StateByMenu(tower, menu.Team)) {
 			this.pSDK.DestroyByKey(this.TowerKeyName(tower))
 			return
 		}
@@ -86,7 +86,7 @@ export class TowerManager {
 		this.pSDK.DrawCircle(keyName, tower, range, {
 			Color: color,
 			Fill: menu.Fill.value,
-			RenderStyle: menu.Style.SelectedID,
+			RenderStyle: this.menu.Style.SelectedID,
 			Attachment: ParticleAttachment.PATTACH_POINT_FOLLOW
 		})
 	}
@@ -95,13 +95,13 @@ export class TowerManager {
 		this.pSDK.DestroyByKey(this.TowerKeyName(entity))
 		this.pSDK.DestroyByKey(this.TowerTargetKeyName(entity))
 	}
-	protected StateByMenu(tower: Tower, eTeam: ETeam) {
+	protected StateByMenu(tower: Tower, teams: Menu.MultiSelect) {
+		if (!tower.IsEnemy()) {
+			return teams.IsSelected(ETowerTeam.Allies)
+		}
 		return (
-			!(
-				tower.IsEnemy() &&
-				eTeam === ETeam.Allies &&
-				GameState.LocalTeam !== Team.Observer
-			) && !(!tower.IsEnemy() && eTeam === ETeam.Enemies)
+			teams.IsSelected(ETowerTeam.Enemies) ||
+			(GameState.LocalTeam === Team.Observer && teams.IsSelected(ETowerTeam.Allies))
 		)
 	}
 	protected UpdateRadiusByArr(destroy = false) {

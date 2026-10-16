@@ -1,45 +1,37 @@
 
-import { EMenuType, ETeam } from "../../enum"
+import { EMenuType } from "../../enum"
 import { RadiusesEvents } from "../../events"
+import { RadiusesIcons } from "../../icons"
+import { AddUnitTeams, EUnitTeam } from "../team"
 
 export class AbilitySettings {
 	public readonly Tree: Menu.Node
 	public readonly Fill: Menu.Toggle
-	public readonly Team: Menu.Dropdown
-	public readonly Style: Menu.Dropdown
+	public readonly Team: Menu.MultiSelect
 	public readonly Color: Menu.ColorPicker
 
-	private readonly arrNames = [
-		"Allies and enemies",
-		"Only enemies",
-		"Only allies",
-		"Only controllable"
-	]
-
 	constructor(node: Menu.Node, abilityName: string, iconTexturePath: string) {
-		this.Tree = node.AddNode(abilityName, iconTexturePath, undefined, 0)
+		this.Tree = node.AddSettings(
+			abilityName,
+			iconTexturePath,
+			"Radius of this ability.\nFill and teams are behind the gear"
+		)
+		this.Tree.IconRound = 0
 		this.Tree.IsHidden = true
 
 		this.Color = this.Tree.AddColorPicker("Color", Color.Green.SetA(255 / 2))
-		this.Fill = this.Tree.AddToggle("Fill", false, "Fill radius insides color")
-		this.Style = this.Tree.AddDropdown("Style", ["Default", "Rope"])
-		this.Team = this.Tree.AddDropdown("Team", this.arrNames, ETeam.Controlable)
+		this.Tree.PairColors(this.Color)
+		this.Fill = this.Tree.AddToggle("Fill", false, "Fill the circle with its color")
+		this.Fill.IconPath = RadiusesIcons.Fill
+		this.Team = AddUnitTeams(this.Tree, [EUnitTeam.Controllable])
 
 		this.Team.OnValue(() => this.EmitMenuChanged())
 		this.Fill.OnValue(() => this.EmitMenuChanged())
-		this.Style.OnValue(() => this.EmitMenuChanged())
 		this.Color.OnValue(() => this.EmitMenuChanged())
 	}
 
 	public Destroy() {
 		this.Tree.DetachFromParent()
-	}
-
-	public ResetSettings() {
-		this.Team.SelectedID = this.Team.SelectedID
-		this.Fill.value = this.Fill.defaultValue
-		this.Style.SelectedID = this.Style.defaultValue
-		this.Color.SelectedColor.CopyFrom(this.Color.defaultColor)
 	}
 
 	protected EmitMenuChanged() {
@@ -50,41 +42,29 @@ export class AbilitySettings {
 export class AttackSettings {
 	public readonly Tree: Menu.Node
 	public readonly Fill: Menu.Toggle
-	public readonly Team: Menu.Dropdown
-	public readonly Style: Menu.Dropdown
+	public readonly Team: Menu.MultiSelect
 	public readonly Color: Menu.ColorPicker
 
-	private readonly arrNames = [
-		"Allies and enemies",
-		"Only enemies",
-		"Only allies",
-		"Only controllable"
-	]
-
-	constructor(node: Menu.Node) {
-		this.Tree = node.AddNode("Attack settings", ImageData.Icons.icon_damage)
-		this.Tree.IsHidden = true
+	constructor(node: Menu.Node, state: Menu.Toggle) {
+		this.Tree = node.AddSubSettings(
+			state,
+			"Attack settings",
+			RadiusesIcons.AttackSettings
+		)
 
 		this.Color = this.Tree.AddColorPicker("Color", Color.Green.SetA(255 / 2))
-		this.Fill = this.Tree.AddToggle("Fill", true, "Fill radius insides color")
-		this.Style = this.Tree.AddDropdown("Style", ["Default", "Rope"])
-		this.Team = this.Tree.AddDropdown("Team", this.arrNames, 3)
+		state.PairColors(this.Color)
+		this.Fill = this.Tree.AddToggle("Fill", true, "Fill the circle with its color")
+		this.Fill.IconPath = RadiusesIcons.Fill
+		this.Team = AddUnitTeams(this.Tree, [EUnitTeam.Controllable])
 
 		this.Team.OnValue(() => this.EmitMenuChanged())
 		this.Fill.OnValue(() => this.EmitMenuChanged())
-		this.Style.OnValue(() => this.EmitMenuChanged())
 		this.Color.OnValue(() => this.EmitMenuChanged())
 	}
 
 	public Destroy() {
 		this.Tree.DetachFromParent()
-	}
-
-	public ResetSettings() {
-		this.Team.SelectedID = this.Team.SelectedID
-		this.Fill.value = this.Fill.defaultValue
-		this.Style.SelectedID = this.Style.defaultValue
-		this.Color.SelectedColor.CopyFrom(this.Color.defaultColor)
 	}
 
 	protected EmitMenuChanged() {

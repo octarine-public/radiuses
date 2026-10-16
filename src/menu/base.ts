@@ -16,7 +16,8 @@ export abstract class BaseMenu {
 	) {
 		this.Tree = node.AddNode(mType, icon, toolTip, round)
 		this.Tree.SortNodes = false
-		this.State = this.Tree.AddToggle("State", defaultValue)
+		this.State = this.Tree.AddToggle("State", defaultValue, toolTip)
+		this.Tree.HeaderControl = this.State
 		this.State.OnValue(() => this.EmitMenuChanged())
 	}
 

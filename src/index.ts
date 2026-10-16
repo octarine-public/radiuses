@@ -59,6 +59,7 @@ new (class CRadiuses {
 		}
 	}
 	protected PostDataUpdate(delta: number) {
+		this.heroes.LocalHeroChanged()
 		if (delta === 0 || !this.state || this.isPostGame) {
 			return
 		}

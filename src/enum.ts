@@ -1,10 +1,3 @@
-export const enum ETeam {
-	All,
-	Enemies,
-	Allies,
-	Controlable
-}
-
 export const enum EMenuType {
 	Base = "Base",
 	Towers = "Towers",

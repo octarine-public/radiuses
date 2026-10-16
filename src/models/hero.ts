@@ -92,7 +92,7 @@ export class HeroData extends BaseUnitData {
 		pSDK.DrawCircle(this.KeyAttackName(), owner, attackRange, {
 			Fill: menu.Fill.value,
 			Color: menu.Color.SelectedColor,
-			RenderStyle: menu.Style.SelectedID,
+			RenderStyle: baseMenu.Style.SelectedID,
 			Attachment: ParticleAttachment.PATTACH_ABSORIGIN_FOLLOW
 		})
 		this.AttackRangeOld = attackRange
@@ -129,12 +129,12 @@ export class HeroData extends BaseUnitData {
 			ability instanceof nevermore_shadowraze2 ||
 			ability instanceof nevermore_shadowraze3
 		) {
-			this.CreateShadowRaze(pSDK, abilSettings, owner, ability)
+			this.CreateShadowRaze(pSDK, menu, abilSettings, owner, ability)
 			return
 		}
 		pSDK.DrawCircle(this.KeyAbilityName(ability), owner, this.Radius(ability), {
 			Fill: abilSettings?.Fill.value ?? false,
-			RenderStyle: abilSettings?.Style.SelectedID ?? 0,
+			RenderStyle: menu.Style.SelectedID,
 			Color: abilSettings?.Color.SelectedColor ?? Color.Aqua,
 			Attachment: ParticleAttachment.PATTACH_ABSORIGIN_FOLLOW
 		})
@@ -143,6 +143,7 @@ export class HeroData extends BaseUnitData {
 
 	protected CreateShadowRaze(
 		pSDK: ParticlesSDK,
+		menu: HeroMenu,
 		abilSettings: Nullable<HeroAbilitySettings>,
 		owner: Unit,
 		ability: Ability
@@ -153,7 +154,7 @@ export class HeroData extends BaseUnitData {
 		const radius = currRadius < radiusByLevel ? radiusByLevel : currRadius
 		pSDK.DrawCircle(this.KeyAbilityName(ability), owner, radius, {
 			Fill: abilSettings?.Fill.value ?? true,
-			RenderStyle: abilSettings?.Style.SelectedID ?? 0,
+			RenderStyle: menu.Style.SelectedID,
 			Color: abilSettings?.Color.SelectedColor ?? Color.Aqua,
 			Attachment: ParticleAttachment.PATTACH_CUSTOMORIGIN,
 			Position: owner.InFront(ability.GetCastRangeForLevel(1))

@@ -1,6 +1,7 @@
 
 import { EMenuType } from "../../enum"
 import { RadiusesEvents } from "../../events"
+import { RadiusesIcons } from "../../icons"
 import { HeroAbilitySettings, HeroAttackSettings } from "./settings"
 
 export class NodeHero {
@@ -14,24 +15,38 @@ export class NodeHero {
 	constructor(
 		root: Menu.Node,
 		public readonly hero: Hero,
-		private readonly existsByName = false
+		private readonly duplicate = 1
 	) {
-		this.Menu = root.AddNode(this.NodeName, hero.TexturePath(true))
+		this.Menu = root.AddNode(
+			this.NodeName,
+			hero.TexturePath(true),
+			"Attack range and the abilities to draw for this hero"
+		)
 
 		this.Menu.Update()
 		this.Menu.IsHidden = false
 		this.Menu.SaveUnusedConfigs = true
 
-		this.AttackState = this.Menu.AddToggle("RADIUSES_ATTACK_TITLE", false)
-		this.Abilities = this.Menu.AddImageSelector("RADIUSES_HIDDEN_TITLE", [])
+		this.AttackState = this.Menu.AddToggle(
+			"RADIUSES_ATTACK_TITLE",
+			false,
+			"Draw the attack range.\nFill and teams are behind the gear"
+		)
+		this.AttackState.IconPath = RadiusesIcons.Attack
+		this.Abilities = this.Menu.AddImageSelector(
+			"RADIUSES_HIDDEN_TITLE",
+			[],
+			undefined,
+			"Click an ability to draw its radius"
+		)
 
-		this.AttackSettings = new HeroAttackSettings(this.hero, this.Menu)
+		this.AttackSettings = new HeroAttackSettings(
+			this.hero,
+			this.Menu,
+			this.AttackState
+		)
 
-		this.AttackState.OnValue(({ value }) => {
-			this.AttackSettings.Tree.IsHidden = !value
-			this.Menu.Update()
-			this.EmitMenuChanged()
-		})
+		this.AttackState.OnValue(() => this.EmitMenuChanged())
 
 		this.Abilities.OnValue(call => {
 			this.UpdateAbilitiesState(call)
@@ -45,8 +60,8 @@ export class NodeHero {
 		if (this.hero.IsClone) {
 			name += ` (${Menu.Localization.Localize("clone")})`
 		}
-		if (this.existsByName && !this.hero.IsClone) {
-			name += ` (${this.hero.PlayerID})`
+		if (this.duplicate > 1 && !this.hero.IsClone) {
+			name += ` #${this.duplicate}`
 		}
 		return name
 	}

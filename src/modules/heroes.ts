@@ -4,6 +4,7 @@ import { BaseUnitManager } from "./base"
 
 export class HeroManager extends BaseUnitManager {
 	private readonly heroes = new Map<Hero, HeroData>()
+	private localHero: Nullable<Hero>
 
 	protected get State() {
 		return super.State && this.menu.HeroMenu.State.value
@@ -20,6 +21,14 @@ export class HeroManager extends BaseUnitManager {
 			this.heroes.forEach(data =>
 				data.PostDataUpdate(this.pSDK, this.menu.HeroMenu)
 			)
+		}
+	}
+
+	public LocalHeroChanged() {
+		const hero = Dota2SDK.LocalPlayer?.Hero
+		if (hero !== this.localHero) {
+			this.localHero = hero
+			this.menu.HeroMenu.UpdateGroups()
 		}
 	}
 

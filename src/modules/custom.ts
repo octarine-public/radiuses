@@ -59,7 +59,7 @@ export class CustomRadiusManager extends BaseManager {
 		this.pSDK.DrawCircle(keyName, localHero, obj.Radius.value, {
 			Color: obj.Color.SelectedColor,
 			Fill: obj.Fill.value,
-			RenderStyle: obj.Style.SelectedID,
+			RenderStyle: this.menu.Style.SelectedID,
 			Attachment: ParticleAttachment.PATTACH_ABSORIGIN_FOLLOW
 		})
 	}

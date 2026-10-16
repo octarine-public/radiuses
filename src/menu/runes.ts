@@ -1,5 +1,6 @@
 
 import { EMenuType } from "../enum"
+import { RadiusesIcons } from "../icons"
 import { BaseMenu } from "./base"
 
 export class RuneMenu extends BaseMenu {
@@ -10,11 +11,16 @@ export class RuneMenu extends BaseMenu {
 			node,
 			EMenuType.Runes,
 			false,
-			ImageData.GetRuneTexture("bounty", true),
-			0,
-			"Pickup distance"
+			RadiusesIcons.Runes,
+			undefined,
+			"Distance a rune can be picked up from,\naround every rune on the map"
 		)
-		this.Color = this.Tree.AddColorPicker("Color", Color.Aqua)
+		this.Color = this.Tree.AddColorPicker(
+			"Color",
+			Color.Aqua,
+			"Color of the pickup circle"
+		)
+		this.Color.IconPath = RadiusesIcons.Color
 		this.Color.OnValue(() => this.EmitMenuChanged())
 	}
 }

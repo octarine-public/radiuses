@@ -40,6 +40,8 @@ export class BearManager extends BaseUnitManager {
 	public EntityDestroyed(entity: SpiritBear | Ability): void {
 		if (entity instanceof SpiritBear) {
 			this.bears.get(entity)?.UnitDestroyed(this.pSDK, this.menu.BearMenu)
+			this.bears.delete(entity)
+			this.menu.BearMenu.SetVisible(this.bears.size !== 0)
 		}
 		if (!(entity instanceof Item || entity instanceof Ability)) {
 			return
@@ -93,6 +95,7 @@ export class BearManager extends BaseUnitManager {
 		if (getUnitData === undefined) {
 			getUnitData = new BearData(entity)
 			this.bears.set(entity, getUnitData)
+			this.menu.BearMenu.SetVisible(true)
 			this.UpdateUnitDataAbilities(getUnitData, this.menu.BearMenu)
 			return getUnitData
 		}

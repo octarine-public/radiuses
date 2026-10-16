@@ -1,19 +1,42 @@
 
 import { EMenuType } from "../../enum"
+import { RadiusesIcons } from "../../icons"
 import { BaseMenu } from "../base"
 import { NodeHero } from "../heroes/node"
+
+/** Where a hero stands in the list: under your hero, the allies or the enemies. */
+const enum EHeroGroup {
+	Yours,
+	Allies,
+	Enemies
+}
 
 export class HeroMenu extends BaseMenu {
 	private readonly hodeHeroes = new Map<Unit, NodeHero>()
 	private readonly defaultState = ["item_blink"]
+	private readonly groups: Menu.ShortDescription[]
 
 	constructor(
 		node: Menu.Node,
-		private readonly baseState: Menu.Toggle
+		private readonly baseState: Menu.Toggle,
+		public readonly Style: Menu.Dropdown
 	) {
-		super(node, EMenuType.Heroes, false, "menu/icons/juggernaut.svg")
-		this.Tree.SortNodes = false
+		super(
+			node,
+			EMenuType.Heroes,
+			false,
+			RadiusesIcons.Heroes,
+			undefined,
+			"Attack and ability radiuses of the heroes in the game.\nEvery hero keeps settings of its own"
+		)
+		this.Tree.SortNodes = true
 		this.Tree.SaveUnusedConfigs = true
+		this.groups = ["Your hero", "Allies", "Enemies"].map((name, group) => {
+			const header = this.Tree.AddSectionHeader(name)
+			header.Priority = group * 2
+			header.IsHidden = true
+			return header
+		})
 	}
 
 	public get FullState() {
@@ -54,14 +77,26 @@ export class HeroMenu extends BaseMenu {
 		const heroMenu = this.hodeHeroes.get(hero)
 		if (heroMenu !== undefined) {
 			heroMenu.Menu.IsHidden = false
-			heroMenu.Menu.Update()
-			this.Tree.Update()
+			this.UpdateGroups()
 			return
 		}
-		const node = new NodeHero(this.Tree, hero, this.hasHeroByName(hero.Name))
+		const node = new NodeHero(this.Tree, hero, this.countHeroesByName(hero.Name) + 1)
 		this.hodeHeroes.set(hero, node)
 		node.Menu.IsHidden = false
-		node.Menu.Update()
+		this.UpdateGroups()
+	}
+
+	/** Files every hero under its group and shows the headings of the groups that have one. */
+	public UpdateGroups() {
+		const filled = this.groups.map(() => false)
+		for (const node of this.hodeHeroes.values()) {
+			const group = this.groupOf(node.hero)
+			node.Menu.Priority = group * 2 + 1
+			filled[group] = true
+		}
+		for (let i = 0; i < this.groups.length; i++) {
+			this.groups[i].IsHidden = !filled[i]
+		}
 		this.Tree.Update()
 	}
 
@@ -78,8 +113,8 @@ export class HeroMenu extends BaseMenu {
 		const heroMenu = this.hodeHeroes.get(hero)
 		if (heroMenu?.hero === hero) {
 			heroMenu.DestroyAll()
-			this.Tree.Update()
 			this.hodeHeroes.delete(hero)
+			this.UpdateGroups()
 		}
 	}
 
@@ -101,7 +136,22 @@ export class HeroMenu extends BaseMenu {
 		}
 	}
 
-	protected hasHeroByName(name: string) {
-		return Array.from(this.hodeHeroes.keys()).some(hero => hero.Name === name)
+	protected countHeroesByName(name: string) {
+		let count = 0
+		for (const hero of this.hodeHeroes.keys()) {
+			if (hero.Name === name && !hero.IsClone) {
+				count++
+			}
+		}
+		return count
+	}
+
+	private groupOf(hero: Unit) {
+		if (hero.IsEnemy()) {
+			return EHeroGroup.Enemies
+		}
+		return hero.IsMyHero || (hero.IsClone && hero.IsControllable)
+			? EHeroGroup.Yours
+			: EHeroGroup.Allies
 	}
 }

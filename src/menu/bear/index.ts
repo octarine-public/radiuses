@@ -1,6 +1,8 @@
 
-import { EMenuType, ETeam } from "../../enum"
+import { EMenuType } from "../../enum"
+import { RadiusesIcons } from "../../icons"
 import { BaseMenu } from "../base"
+import { IsUnitTeamSelected } from "../team"
 import { AbilitySettings, AttackSettings } from "./settings"
 
 export class BearMenu extends BaseMenu {
@@ -11,22 +13,37 @@ export class BearMenu extends BaseMenu {
 
 	constructor(
 		node: Menu.Node,
-		private readonly baseState: Menu.Toggle
+		private readonly baseState: Menu.Toggle,
+		public readonly Style: Menu.Dropdown
 	) {
-		super(node, EMenuType.Bear, false, ImageData.Icons.icon_svg_teddy_bear)
+		super(
+			node,
+			EMenuType.Bear,
+			false,
+			RadiusesIcons.Bear,
+			undefined,
+			"Attack and ability radiuses of the Spirit Bear.\nShown while a bear is in the game"
+		)
 		this.Tree.SortNodes = false
 		this.Tree.SaveUnusedConfigs = true
+		this.Tree.IsHidden = true
 
-		this.AttackState = this.Tree.AddToggle("RADIUSES_ATTACK_TITLE", false)
-		this.Attack = new AttackSettings(this.Tree)
-		this.Abilities = this.Tree.AddImageSelector("RADIUSES_HIDDEN_TITLE", [])
+		this.AttackState = this.Tree.AddToggle(
+			"RADIUSES_ATTACK_TITLE",
+			false,
+			"Draw the attack range.\nFill and teams are behind the gear"
+		)
+		this.AttackState.IconPath = RadiusesIcons.Attack
+		this.Attack = new AttackSettings(this.Tree, this.AttackState)
+		this.Abilities = this.Tree.AddImageSelector(
+			"RADIUSES_HIDDEN_TITLE",
+			[],
+			undefined,
+			"Click an ability to draw its radius"
+		)
 		this.Abilities.IsHidden = true
 
-		this.AttackState.OnValue(({ value }) => {
-			this.Attack.Tree.IsHidden = !value
-			this.Tree.Update()
-			this.EmitMenuChanged()
-		})
+		this.AttackState.OnValue(() => this.EmitMenuChanged())
 
 		this.Abilities.OnValue(call => {
 			this.UpdateAbilitiesState(call)
@@ -39,36 +56,26 @@ export class BearMenu extends BaseMenu {
 		return this.baseState.value && this.State.value
 	}
 
-	public ResetSettings() {
-		this.State.value = this.State.defaultValue
-		this.Attack.ResetSettings()
-		this.AbilitySettings.forEach(abil => abil.ResetSettings())
-		this.Tree.Update()
-		this.EmitMenuChanged()
-	}
-
-	public StateByTeam(owner: SpiritBear, eTeam: ETeam) {
-		if (eTeam === ETeam.All) {
-			return true
+	/** Shows the card while a Spirit Bear is in the game and folds it away once none is left. */
+	public SetVisible(visible: boolean) {
+		if (this.Tree.IsHidden === !visible) {
+			return
 		}
-		return (
-			(eTeam === ETeam.Allies && !owner.IsEnemy()) ||
-			(eTeam === ETeam.Enemies && owner.IsEnemy()) ||
-			(eTeam === ETeam.Controlable && owner.IsControllable)
-		)
+		this.Tree.IsHidden = !visible
+		this.Tree.Update()
 	}
 
 	public IsEnabledAbility(ability: Ability, owner: SpiritBear) {
-		const abilSettings = this.AbilitySettings.get(ability.Name),
-			eTeam = abilSettings?.Team.SelectedID ?? ETeam.Controlable
-		const stateByTeam = this.StateByTeam(owner, eTeam)
+		const abilSettings = this.AbilitySettings.get(ability.Name)
+		const stateByTeam =
+			abilSettings === undefined
+				? owner.IsControllable
+				: IsUnitTeamSelected(owner, abilSettings.Team)
 		return this.Abilities.IsEnabled(ability.Name) && stateByTeam
 	}
 
 	public IsEnabledAttack(owner: SpiritBear) {
-		const eTeam = this.Attack.Team.SelectedID
-		const stateByTeam = this.StateByTeam(owner, eTeam)
-		return this.AttackState.value && stateByTeam
+		return this.AttackState.value && IsUnitTeamSelected(owner, this.Attack.Team)
 	}
 
 	public SetAbilities(hero: SpiritBear, abilities: Ability[]) {

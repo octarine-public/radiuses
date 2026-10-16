@@ -1,36 +1,34 @@
 
-import { EMenuType, ETeam } from "../../enum"
+import { EMenuType } from "../../enum"
 import { RadiusesEvents } from "../../events"
+import { RadiusesIcons } from "../../icons"
+import { AddUnitTeams, EUnitTeam, IsUnitTeamSelected } from "../team"
 
 export class HeroAttackSettings {
 	public readonly Tree: Menu.Node
 	public readonly Fill: Menu.Toggle
-	public readonly Team: Menu.Dropdown
-	public readonly Style: Menu.Dropdown
+	public readonly Team: Menu.MultiSelect
 	public readonly Color: Menu.ColorPicker
-
-	private readonly arrNames = [
-		"Allies and enemies",
-		"Only enemies",
-		"Only allies",
-		"Only controllable"
-	]
 
 	constructor(
 		private readonly hero: Hero,
-		node: Menu.Node
+		node: Menu.Node,
+		state: Menu.Toggle
 	) {
-		this.Tree = node.AddNode("Attack settings", ImageData.Icons.icon_damage)
-		this.Tree.IsHidden = true
+		this.Tree = node.AddSubSettings(
+			state,
+			"Attack settings",
+			RadiusesIcons.AttackSettings
+		)
 
 		this.Color = this.Tree.AddColorPicker("Color", Color.Green.SetA(255 / 2))
-		this.Fill = this.Tree.AddToggle("Fill", false, "Fill radius insides color")
-		this.Style = this.Tree.AddDropdown("Style", ["Default", "Rope"])
-		this.Team = this.Tree.AddDropdown("Team", this.arrNames, 3)
+		state.PairColors(this.Color)
+		this.Fill = this.Tree.AddToggle("Fill", false, "Fill the circle with its color")
+		this.Fill.IconPath = RadiusesIcons.Fill
+		this.Team = AddUnitTeams(this.Tree, [EUnitTeam.Controllable])
 
 		this.Team.OnValue(() => this.EmitMenuChanged())
 		this.Fill.OnValue(() => this.EmitMenuChanged())
-		this.Style.OnValue(() => this.EmitMenuChanged())
 		this.Color.OnValue(() => this.EmitMenuChanged())
 	}
 
@@ -39,14 +37,7 @@ export class HeroAttackSettings {
 	}
 
 	public get StateByTeam() {
-		if (this.Team.SelectedID === ETeam.All) {
-			return true
-		}
-		return (
-			(this.Team.SelectedID === ETeam.Allies && !this.hero.IsEnemy()) ||
-			(this.Team.SelectedID === ETeam.Enemies && this.hero.IsEnemy()) ||
-			(this.Team.SelectedID === ETeam.Controlable && this.hero.IsControllable)
-		)
+		return IsUnitTeamSelected(this.hero, this.Team)
 	}
 
 	protected EmitMenuChanged() {
@@ -57,16 +48,8 @@ export class HeroAttackSettings {
 export class HeroAbilitySettings {
 	public readonly Tree: Menu.Node
 	public readonly Fill: Menu.Toggle
-	public readonly Team: Menu.Dropdown
-	public readonly Style: Menu.Dropdown
+	public readonly Team: Menu.MultiSelect
 	public readonly Color: Menu.ColorPicker
-
-	private readonly arrNames = [
-		"Allies and enemies",
-		"Only enemies",
-		"Only allies",
-		"Only controllable"
-	]
 
 	constructor(
 		private readonly hero: Hero,
@@ -74,29 +57,27 @@ export class HeroAbilitySettings {
 		abilityName: string,
 		iconTexturePath: string
 	) {
-		this.Tree = node.AddNode(abilityName, iconTexturePath, undefined, 0)
+		this.Tree = node.AddSettings(
+			abilityName,
+			iconTexturePath,
+			"Radius of this ability.\nFill and teams are behind the gear"
+		)
+		this.Tree.IconRound = 0
 		this.Tree.IsHidden = true
 
 		this.Color = this.Tree.AddColorPicker("Color", Color.Green.SetA(255 / 2))
-		this.Fill = this.Tree.AddToggle("Fill", true, "Fill radius insides color")
-		this.Style = this.Tree.AddDropdown("Style", ["Default", "Rope"])
-		this.Team = this.Tree.AddDropdown("Team", this.arrNames, 3)
+		this.Tree.PairColors(this.Color)
+		this.Fill = this.Tree.AddToggle("Fill", true, "Fill the circle with its color")
+		this.Fill.IconPath = RadiusesIcons.Fill
+		this.Team = AddUnitTeams(this.Tree, [EUnitTeam.Controllable])
 
 		this.Team.OnValue(() => this.EmitMenuChanged())
 		this.Fill.OnValue(() => this.EmitMenuChanged())
-		this.Style.OnValue(() => this.EmitMenuChanged())
 		this.Color.OnValue(() => this.EmitMenuChanged())
 	}
 
 	public get StateByTeam() {
-		if (this.Team.SelectedID === ETeam.All) {
-			return true
-		}
-		return (
-			(this.Team.SelectedID === ETeam.Allies && !this.hero.IsEnemy()) ||
-			(this.Team.SelectedID === ETeam.Enemies && this.hero.IsEnemy()) ||
-			(this.Team.SelectedID === ETeam.Controlable && this.hero.IsControllable)
-		)
+		return IsUnitTeamSelected(this.hero, this.Team)
 	}
 
 	public Destroy() {

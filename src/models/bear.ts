@@ -82,7 +82,7 @@ export class BearData extends BaseUnitData {
 		pSDK.DrawCircle(this.KeyAttackName(), owner, attackRange, {
 			Fill: menu.Fill.value,
 			Color: menu.Color.SelectedColor,
-			RenderStyle: menu.Style.SelectedID,
+			RenderStyle: baseMenu.Style.SelectedID,
 			Attachment: ParticleAttachment.PATTACH_ABSORIGIN_FOLLOW
 		})
 		this.AttackRangeOld = attackRange
@@ -108,7 +108,7 @@ export class BearData extends BaseUnitData {
 			Fill: abilSettings?.Fill.value ?? false,
 			Color: abilSettings?.Color.SelectedColor ?? Color.Aqua,
 			Attachment: ParticleAttachment.PATTACH_ABSORIGIN_FOLLOW,
-			RenderStyle: abilSettings?.Style.SelectedID ?? PARTICLE_RENDER.NORMAL
+			RenderStyle: menu.Style.SelectedID
 		})
 		this.abilitiesRadiusCaches.set(ability, this.Radius(ability))
 	}
